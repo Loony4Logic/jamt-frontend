@@ -1,38 +1,59 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
-import { Camera } from 'lucide-react'
+import { Navigate, Outlet, useLocation } from "react-router-dom";
+import "./App.css";
+import Navbar from "./components/Navbar/Navbar";
+import {
+  Box,
+  CssBaseline,
+  PaletteMode,
+  ThemeProvider,
+  createTheme,
+} from "@mui/material";
+import Footer from "./components/Footer";
+import { ROUTES_MAP } from "./AppConstants";
+import { useState } from "react";
+import {
+  AppThemeHelperContext,
+  AppThemeHelperContextType,
+} from "./AppThemeHelpersContext";
 
+const darkTheme = createTheme({
+  palette: {
+    mode: "dark",
+  },
+});
+
+const lightTheme = createTheme({
+  palette: {
+    mode: "light",
+  },
+});
 
 function App() {
-  const [count, setCount] = useState(0)
+  const location = useLocation();
+  const [themeMode, setThemeMode] = useState<PaletteMode>("dark");
+
+  const appThemeHelpers: AppThemeHelperContextType = {
+    toggleThemeMode: () => {
+      setThemeMode((prevMode) => (prevMode === "dark" ? "light" : "dark"));
+    },
+  };
+
+  if (location.pathname == "/") return <Navigate to={`${ROUTES_MAP.LOGS}`} />;
 
   return (
     <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <Camera />
-      <h1>Vite + React Edit</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <AppThemeHelperContext.Provider value={appThemeHelpers}>
+        <ThemeProvider theme={themeMode === "dark" ? darkTheme : lightTheme}>
+          <CssBaseline />
+          <Navbar />
+          <Box sx={{ my: 2, p: 2 }}>
+            <Outlet />
+          </Box>
+          <Footer />
+        </ThemeProvider>
+      </AppThemeHelperContext.Provider>
     </>
-  )
+  );
 }
 
-export default App
+export default App;
