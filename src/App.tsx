@@ -38,6 +38,7 @@ function App() {
     },
   };
 
+  /** redirect to logs page */
   if (location.pathname == "/") return <Navigate to={`${ROUTES_MAP.LOGS}`} />;
 
   return (
